@@ -25,8 +25,8 @@ public class AllRequestsServlet extends HttpServlet {
         Map<String, Object> pageVariables = createPageVariablesMap(request);
         pageVariables.put("message", "");
 
-        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
-
+//        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
+        response.getWriter().println(request.getParameter("key"));
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
 
