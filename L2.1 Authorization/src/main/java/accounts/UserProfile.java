@@ -18,6 +18,12 @@ public class UserProfile {
         this.email = email;
     }
 
+    public UserProfile(String login, String pass) {
+        this.login = login;
+        this.pass = pass;
+        this.email = login;
+    }
+
     public UserProfile(String login) {
         this.login = login;
         this.pass = login;

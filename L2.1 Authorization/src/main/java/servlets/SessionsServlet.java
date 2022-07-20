@@ -45,7 +45,7 @@ public class SessionsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request,
                        HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
-        String pass = request.getParameter("pass");
+        String pass = request.getParameter("password");
 
         if (login == null || pass == null) {
             response.setContentType("text/html;charset=utf-8");
@@ -57,14 +57,13 @@ public class SessionsServlet extends HttpServlet {
         if (profile == null || !profile.getPass().equals(pass)) {
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Unauthorized");
             return;
         }
 
         accountService.addSession(request.getSession().getId(), profile);
-        Gson gson = new Gson();
-        String json = gson.toJson(profile);
         response.setContentType("text/html;charset=utf-8");
-        response.getWriter().println(json);
+        response.getWriter().println("Authorized: " + login);
         response.setStatus(HttpServletResponse.SC_OK);
     }
 

@@ -1,6 +1,7 @@
 package servlets;
 
 import accounts.AccountService;
+import accounts.UserProfile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +33,11 @@ public class UsersServlet extends HttpServlet {
     //sign up
     public void doPost(HttpServletRequest request,
                        HttpServletResponse response) throws ServletException, IOException {
-        //todo: module 2 home work
+        String login = request.getParameter("login");
+        String pass = request.getParameter("password");
+
+        UserProfile userProfile = new UserProfile(login, pass);
+        accountService.addNewUser(userProfile);
     }
 
     //change profile
