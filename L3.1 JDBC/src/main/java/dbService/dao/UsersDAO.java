@@ -1,5 +1,6 @@
 package dbService.dao;
 
+import accounts.UserProfile;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
 
@@ -21,26 +22,47 @@ public class UsersDAO {
         this.executor = new Executor(connection);
     }
 
-    public UsersDataSet get(long id) throws SQLException {
+    public UsersDataSet getByID(long id) throws SQLException {
         return executor.execQuery("select * from users where id=" + id, result -> {
             result.next();
-            return new UsersDataSet(result.getLong(1), result.getString(2));
+            return new UsersDataSet(result.getLong(1),
+                    result.getString(2),
+                    result.getString(3));
         });
     }
 
+    public UserProfile getByLogin(String login) throws SQLException {
+        UsersDataSet usersDataSet = executor.execQuery("select * from users where login='"
+                + login + "'", result -> {
+            if (!result.next()) {
+                return null;
+            }
+            return new UsersDataSet(result.getLong(1),
+                    result.getString(2),
+                    result.getString(3));
+        });
+        if (usersDataSet == null) {
+            return null;
+        }
+        return new UserProfile(usersDataSet.getLogin(), usersDataSet.getPassword());
+    }
+
     public long getUserId(String name) throws SQLException {
-        return executor.execQuery("select * from users where user_name='" + name + "'", result -> {
+        return executor.execQuery("select * from users where login='" + name + "'", result -> {
             result.next();
             return result.getLong(1);
         });
     }
 
-    public void insertUser(String name) throws SQLException {
-        executor.execUpdate("insert into users (user_name) values ('" + name + "')");
+    public void insertUser(UserProfile userProfile) throws SQLException {
+        executor.execUpdate("insert into users (login, password) values " +
+                "('" + userProfile.getLogin()+ "', '" + userProfile.getPassword() + "')");
     }
 
     public void createTable() throws SQLException {
-        executor.execUpdate("create table if not exists users (id bigint auto_increment, user_name varchar(256), primary key (id))");
+        executor.execUpdate("create table if not exists users " +
+                "(id bigint auto_increment, login varchar(256), " +
+                "password varchar(256), primary key (id))");
     }
 
     public void dropTable() throws SQLException {

@@ -1,5 +1,6 @@
 package dbService;
 
+import accounts.UserProfile;
 import dbService.dao.UsersDAO;
 import dbService.dataSets.UsersDataSet;
 import org.h2.jdbcx.JdbcDataSource;
@@ -22,22 +23,30 @@ public class DBService {
         this.connection = getH2Connection();
     }
 
-    public UsersDataSet getUser(long id) throws DBException {
+    public UsersDataSet getUserByID(long id) throws DBException {
         try {
-            return (new UsersDAO(connection).get(id));
+            return (new UsersDAO(connection).getByID(id));
         } catch (SQLException e) {
             throw new DBException(e);
         }
     }
 
-    public long addUser(String name) throws DBException {
+    public UserProfile getUserByLogin(String login) throws DBException {
+        try {
+            return (new UsersDAO(connection).getByLogin(login));
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public long addUser(UserProfile userProfile) throws DBException {
         try {
             connection.setAutoCommit(false);
             UsersDAO dao = new UsersDAO(connection);
             dao.createTable();
-            dao.insertUser(name);
+            dao.insertUser(userProfile);
             connection.commit();
-            return dao.getUserId(name);
+            return dao.getUserId(userProfile.getLogin());
         } catch (SQLException e) {
             try {
                 connection.rollback();
